@@ -7,7 +7,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
     path('comments/', include('comments.urls')),
-    path('',include('users.urls'))
+    path('',include('users.urls')),
+    path("talk_with_ai/", include("talk_with_ai.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

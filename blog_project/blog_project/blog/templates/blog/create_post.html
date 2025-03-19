@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Create a New Blog Post{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="post-title">Create a New Blog Post</h2>
+
+    {% if form.errors %}
+    <div class="error-message">
+        <p>Please fix the errors below:</p>
+        <ul>
+            {% for field, errors in form.errors.items %}
+            <li><strong>{{ field }}:</strong> {{ errors|striptags }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_title">Title:</label>
+            {{ form.title }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_content">Content:</label>
+            {{ form.content }}
+        </div>
+        
+        <!-- Image Upload -->
+        <div class="form-group">
+            <label>Upload Image:</label>
+            <label for="id_image" class="custom-file-upload">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Choose Image
+            </label>
+            <input type="file" id="id_image" name="image" accept="image/*" multiple
+                onchange="updateFileList(this, 'imagePreview', 'imageFiles')">
+            <div id="imagePreview" class="file-preview"></div>
+        </div>
+        
+        <!-- Video Upload -->
+        <div class="form-group">
+            <label>Upload Video:</label>
+            <label for="id_video" class="custom-file-upload">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Choose Video
+            </label>
+            <input type="file" id="id_video" name="video" accept="video/*" multiple
+                onchange="updateFileList(this, 'videoPreview', 'videoFiles')">
+            <div id="videoPreview" class="file-preview"></div>
+        </div>
+        
+        <button type="submit" class="button">Publish</button>
+    </form>
+
+    <p class="mt-4">
+        <a href="{% url 'blog_list' %}" class="button">Back to all posts</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block title %}All Blog Posts{% endblock %}
+{% block content %}
+<style>
+    .blog-post img {
+        width: auto;  /* Maintain aspect ratio */
+        max-width: 100px; /* Adjust as needed */
+        height: auto; /* Scale proportionally */
+        border-radius: 10px; /* Optional: for rounded corners */
+        display: block;
+    }
+    
+    .comment-avatar img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .post-media img, 
+    .post-media video {
+        width: 100%;
+        max-height: 300px;
+        border-radius: 10px;
+        object-fit: contain; /* Prevents cropping */
+        display: block;
+        margin: auto;
+    }
+    
+</style>
+
+<div class="container">
+    <h2 class="post-title">Blog Posts</h2>
+    <div class="posts-list">
+        {% for post in posts %}
+        <article class="post-card">
+            <header class="post-header">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <p class="post-meta">By: {{ post.author.username }} | <span class="post-meta">{{ post.created_at }}</span></p>
+            </header>
+
+            <div class="post-content">
+                <p>{{ post.content }}</p>
+            </div>
+
+            {% if post.image %}
+            <div class="post-media">
+                <img src="{{ post.image.url }}" alt="Image for {{ post.title }}">
+            </div>
+            {% endif %}
+
+            {% if post.video %}
+            <div class="post-media">
+                <video controls>
+                    <source src="{{ post.video.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            {% endif %}
+
+            <div class="post-actions">
+                <div class="like-container">
+                    <button id="like-btn-{{ post.id }}" class="like-btn" data-post-id="{{ post.id }}">
+                        {% if user in post.likes.all %}
+                            ❤️ Unlike
+                        {% else %}
+                            🤍 Like
+                        {% endif %}
+                    </button>
+                    <span id="like-count-{{ post.id }}" class="like-count">{{ post.total_likes }}</span>
+                </div>
+                
+                {% if user == post.author %}
+                <a href="{% url 'edit_blog_post' post.id %}" class="button">Edit</a>
+                {% endif %}
+            
+                <a href="{% url 'add_comment' post.id %}" class="button">Add Comment</a>
+            </div>
+
+            {% if post.comments.all %}
+            <div class="comments-section">
+                <h4>Comments</h4>
+                <div id="commentList">
+                    {% for comment in post.comments.all|slice:":1" %}
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-avatar">
+                                <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author.username }}">
+                            </div>
+                            <p><span class="comment-author">{{ comment.author.username }}</span></p>
+                            <span class="comment-meta">{{ comment.created_at }}</span>
+                        </div>
+                        <p class="comment-content">{{ comment.content }}</p>
+                        <a href="{% url 'add_reply' comment.id %}" class="button-reply">Reply</a>
+
+                        {% if comment.replies.all %}
+                        <div class="replies">
+                            <div class="replyList">
+                                {% for reply in comment.replies.all|slice:":1" %}
+                                <div class="reply">
+                                    <div class="comment-header">
+                                        <div class="comment-avatar">
+                                            <img src="{{ reply.author.profile.image.url }}" alt="{{ reply.author.username }}">
+                                        </div>
+                                        <div>
+                                            <p><span class="comment-author">{{ reply.author.username }}</span></p>
+                                            <span class="reply-meta">{{ reply.created_at }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="comment-content">{{ reply.content }}</p>
+                                </div>
+                                {% endfor %}
+                                <div class="hiddenReplies" style="display: none;">
+                                    {% for reply in comment.replies.all|slice:"1:" %}
+                                    <div class="reply">
+                                        <div class="comment-header">
+                                            <div class="comment-avatar">
+                                                <img src="{{ reply.author.profile.image.url }}" alt="{{ reply.author.username }}">
+                                            </div>
+                                            <div>
+                                                <p><span class="comment-author">{{ reply.author.username }}</span></p>
+                                                <span class="reply-meta">{{ reply.created_at }}</span>
+                                            </div>
+                                        </div>
+                                        <p class="comment-content">{{ reply.content }}</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        
+                            {% if comment.replies.count > 1 %}
+                            <span class="toggleReplies small-text" data-reply-id="reply-{{ comment.id }}">
+                                Show More Replies
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div id="hiddenComments" style="display: none;">
+                        {% for comment in post.comments.all|slice:"1:" %}
+                        <div class="comment">
+                            <div class="comment-header">
+                                <div class="comment-avatar">
+                                    <img src="{{ comment.author.profile.image.url }}" alt="{{ comment.author.username }}">
+                                </div>
+                                <p>
+                                    <span class="comment-author">{{ comment.author.username }}</span>: {{ comment.content }}
+                                </p>
+                            </div>
+                            <a href="{% url 'add_reply' comment.id %}" class="button-reply">Reply</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if post.comments.count > 1 %}
+                <button id="toggleComments" class="button-secondary">
+                    Show More
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".like-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                const postId = this.dataset.postId;
+                const likeBtn = this;
+                const likeCount = document.getElementById(`like-count-${postId}`);
+
+                fetch(`/post/${postId}/like/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    likeBtn.innerHTML = data.liked ? "❤️ Unlike" : "🤍 Like";
+                    likeCount.innerText = data.like_count;
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}

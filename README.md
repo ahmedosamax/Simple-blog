@@ -1,5 +1,6 @@
 Blog Project
-![alt text](sss.jpg)
+
+
 Overview
 
 This is a Django-based blog application that allows users to create, manage, and interact with blog posts. It includes features such as authentication, likes, notifications, user profiles, and an AI chat feature.

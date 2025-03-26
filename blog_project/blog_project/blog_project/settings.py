@@ -17,7 +17,8 @@ import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+CSRF_TRUSTED_ORIGINS = ["https://simple-blog-production-426a.up.railway.app/"
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -148,3 +149,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCAyKMukqdL_J2uFZVlOolHxe1pISeLUFc")
 
 STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# settings.py
+
+CSRF_TRUSTED_ORIGINS = [
+]
+

@@ -30,7 +30,9 @@ SECRET_KEY = 'django-insecure-x7(9r40dm)2angpviuz4a1kt%o!m1-ng+qu+n^_y1s3cq1-b*g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['simple-blog-production-426a.up.railway.app',  # Your production URL
+    'localhost',
+    '127.0.0.1',]
 
 
 # Application definition
@@ -60,6 +62,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CSRF_COOKIE_SECURE = True  # Set to True if you're using HTTPS
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'  # Adjust based on your needs
+
+SESSION_COOKIE_SECURE = True  # Set to True if you're using HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'  # Adjust based on your needs
 
 ROOT_URLCONF = 'blog_project.urls'
 
@@ -152,6 +161,4 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCAyKMukqdL_J2uFZVlOolHxe1pIS
 STATICSTORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # settings.py
 
-CSRF_TRUSTED_ORIGINS = [
-]
 

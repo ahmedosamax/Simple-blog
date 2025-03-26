@@ -10,8 +10,8 @@ class Profile(models.Model):
         return f'{self.user.username} Profile'
    
    
-    def save(self, *args, **kwargs):  # ✅ Accept all arguments
-        super().save(*args, **kwargs)  # ✅ Fix the issue
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         img = Image.open(self.image.path)
 
         if img.height > 300 or img.width > 300:

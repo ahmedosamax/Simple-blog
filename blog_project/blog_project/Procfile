@@ -1,3 +1,2 @@
-web:
-gunicorn
-your_project_name.wsgi
+web: gunicorn blog_project.wsgi
+

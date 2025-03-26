@@ -17,7 +17,8 @@ import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-CSRF_TRUSTED_ORIGINS = ["*"
+CSRF_TRUSTED_ORIGINS = [
+    'https://simple-blog-production-426a.up.railway.app',  # Add your production URL here
 ]
 
 # Quick-start development settings - unsuitable for production
